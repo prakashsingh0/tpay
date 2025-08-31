@@ -31,6 +31,8 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    
+    
 
     const user = await User.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -42,8 +44,28 @@ exports.login = async (req, res) => {
       expiresIn: '1d',
     });
 
-    res.json({ message: 'Login successful', token });
+    res.json({ message: 'Login successful', token,user });
+    // console.log("User logged in:", user.name);
+    
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+exports.userProfile = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    // find user without password
+    const user = await User.findByPk(userId, {
+      attributes: { exclude: ['password'] }
+    });
+    //check user Exists or not if not then send 404 or this message
+    if (!user) return res.status(404).json({ message: "User not found" });
+    // if user found then send user data
+    res.status(200).json({
+      message: "User Profile fetch Successfully",
+      user
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+}

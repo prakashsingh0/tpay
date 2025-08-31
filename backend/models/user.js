@@ -26,8 +26,26 @@ const User = sequelize.define('User', {
   balance: {
     type: DataTypes.DECIMAL(10, 2),
     defaultValue: 0.00
+  },
+  upi: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: true
   }
-  
+});
+
+// 🔹 Hook: Auto-generate UPI before creating user
+User.beforeCreate((user, options) => {
+  if (user.phone) {
+    user.upi = `${user.phone}@tpay`;
+  }
+});
+
+// 🔹 Hook: Auto-update UPI if phone changes
+User.beforeUpdate((user, options) => {
+  if (user.phone) {
+    user.upi = `${user.phone}@tpay`;
+  }
 });
 
 module.exports = User;

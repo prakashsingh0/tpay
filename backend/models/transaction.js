@@ -11,6 +11,10 @@ const Transaction = sequelize.define('Transaction', {
     type: DataTypes.ENUM('pending', 'success', 'failed'),
     defaultValue: 'pending',
   },
+  type: {
+    type: DataTypes.ENUM('credit', 'debit'), // 👈 new field
+    allowNull: false,
+  },
 });
 
 Transaction.belongsTo(User, { as: 'Sender', foreignKey: 'senderId' });
